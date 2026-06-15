@@ -1,0 +1,6 @@
+### **Task 1: Create IAM User + Enable MFA**
+1. IAM → Users → Create user: `Day1-task`
+2. Select AWS Management Console access
+3. Attach policy: `AdministratorAccess`  
+   *Note: For production use ReadOnlyAccess. Admin used here for learning only.*
+4. After creation → Security credentials → MFA → Assign MFA device → Use Authenticator app.
