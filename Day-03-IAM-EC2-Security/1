@@ -1,0 +1,20 @@
+### **Task 3: Configure Security Group for SSH**
+Edit inbound rules of `Raju-SSH-SG`:Type: SSH
+Protocol: TCPPort: 22
+Source: My IP /32
+Description: Allow SSH from my IP onlyjavascript**SRE Tip**: Never use `0.0.0.0/0` for SSH port 22. It will attract brute force attacks.
+
+### **Task 4: Create IAM Role and Attach to EC2**
+1. IAM → Roles → Create role
+2. Trusted entity: AWS service → EC2
+3. Permissions: `AmazonEC2ReadOnlyAccess` + `AmazonS3ReadOnlyAccess`
+4. Role name: `EC2-S3-ReadOnly-Role`
+
+**Attach Role to EC2:**
+EC2 → Select instance → Actions → Security → Modify IAM role → Select `EC2-S3-ReadOnly-Role`
+
+**Test from EC2 SSH:**
+```bash
+sudo dnf install awscli -y
+aws --version
+aws s3 ls
