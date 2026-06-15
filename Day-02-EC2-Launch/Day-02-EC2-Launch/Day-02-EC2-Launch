@@ -1,0 +1,7 @@
+### **Task 2: Launch EC2 Instance**
+1. EC2 → Launch instance
+2. AMI: Amazon Linux 2023 Free Tier eligible
+3. Instance type: `t3.micro`
+4. Key pair: Create `raju-key.pem` and download
+5. Network: Default VPC, Default Subnet
+6. Security Group: Create new SG → Name `Raju-SSH-SG`
