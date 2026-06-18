@@ -1,0 +1,29 @@
+AWS VPC Interview Q&A - Day 4 Lab
+Q1: What is the difference between a public subnet and a private subnet?
+A: A public subnet has a route in its route table: 0.0.0.0/0 → Internet Gateway. So EC2 instances with a public IP can access the internet. A private subnet has no IGW route, only the local route. So EC2 instances in a private subnet cannot access the internet and cannot be accessed from the internet. We keep databases and application servers in private subnets for security.
+Q2: What is a bastion host and why do we use it?
+A: A bastion host is a jump server placed in a public subnet. Private EC2 instances don't have public IPs, so we can't access them directly. We first SSH into the bastion host, then from there SSH into the private EC2. This reduces the attack surface - only 1 server is exposed to the internet, everything else stays private.
+
+Q3: Why is referencing a Security Group ID better than using CIDR in SG rules?
+A: CIDR like 10.0.1.0/24 is static. If the bastion's IP changes, the rule breaks. Referencing by SG-ID sg-xxxx is dynamic. AWS automatically allows traffic from any instance attached to that SG, even if the IP changes. It's more maintainable and follows best practices.
+
+Q4: My private EC2 was able to ping the internet. What was the issue?
+A: The private route table had 0.0.0.0/0 → Internet Gateway route by mistake. Private subnets should not have internet access. I removed the IGW route and kept only the local route. Now it's properly isolated.
+
+Q5: How do you SSH into an EC2 that doesn't have a public IP?
+A: Two ways: 1. Bastion host pattern - SSH into public bastion first, then jump to private EC2. 2. AWS SSM Session Manager - install SSM agent and connect via AWS console without keys or public IP. SSM is more secure and used in production.
+
+Q6: Why do we get Permission denied (publickey) error?
+A: 3 main reasons: 1. Wrong key file. 2. Key file permissions not set to 400 - must run chmod 400 key.pem. 3. Wrong username - use ubuntu@ for Ubuntu AMI, ec2-user@ for Amazon Linux.
+
+Q7: Does attaching an Internet Gateway automatically give internet access?
+A: No. You need 3 things: 1. Create IGW and attach to VPC. 2. Add route 0.0.0.0/0 → igw-xxxx in route table. 3. Assign public IP to EC2. Just attaching IGW does nothing without the route.
+
+Q8: Difference between NACL and Security Group?
+A: Security Groups are stateful - if inbound is allowed, outbound response is auto-allowed. They work at instance level. NACLs are stateless - you must write rules for both inbound and outbound. They work at subnet level. SG is the primary firewall, NACL is an extra layer.
+
+Q9: How will you give internet access to private subnet for patching?
+A: Use NAT Gateway or NAT Instance. Add route 0.0.0.0/0 → nat-xxxx in private route table. This allows private EC2 to go outbound for updates, but internet cannot initiate inbound connections. That's Day 5's lab.
+
+Q10: curl google.com hangs on private EC2. How will you debug?
+A: Step by step: 1. ip addr to check IP. 2. route -n to check default gateway - is IGW route present? 3. Check Security Group inbound/outbound rules. 4. Check NACL rules. 5. Enable VPC Flow Logs to see where packets are getting rejected. Today we found the bug at step 2 - IGW route was in private RT.
