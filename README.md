@@ -80,3 +80,16 @@ aws s3 lsResult: S3 bucket list appears without running aws configure ✅
 This proves IAM Role is working and providing credentials.3. Key SRE Learnings from Day 3
 Never use root account: Use IAM user + MFA for daily workLeast Privilege: Allow SSH only from your IP. Deny everything elseNo Hardcoded Keys: Use IAM Role for EC2 to AWS service access, not Access KeysRegion Selection: Choose region close to users for low latency and data compliance4. Common Mistakes & FixesMistakeImpactFixSG: 0.0.0.0/0 for SSH port 22Server will get hackedUse My IP/32Storing Access Keys on EC2Key leak = Full account accessUse IAM RoleNo MFA enabledPassword leak = Full accessEnable MFA mandatoryScreenshots for GitHub Repo:
 IAM User with MFA Enabled statusEC2 Instance details showing t3.micro + ap-south-1 regionSecurity Group Inbound rule with My IP/32IAM Role attached to EC2 instanceaws s3 ls command output from EC2 terminal
+
+
+
+Day 4 VPC Lab completed successfully
+
+1. Created VPC vpc-day4 with public subnet 10.0.1.0/24 and private subnet 10.0.2.0/24
+2. Configured Internet Gateway for public subnet only
+3. Identified and removed IGW route from private route table to isolate private subnet
+4. Implemented bastion host pattern for secure access to private EC2
+5. Configured security groups: private SG allows SSH only from bastion SG
+6. Verified connectivity and access controls
+
+Private subnet is now isolated from internet while remaining accessible via bastion.**
